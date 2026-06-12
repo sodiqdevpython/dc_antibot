@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{902745A5-1554-4C35-AD7D-8FA129AA2415}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>dc_antibot</RootNamespace>
+    <AssemblyName>dc_antibot</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app1.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="dc_event_consumer">
+      <HintPath>..\dc_driver\dc_event_consumer\bin\Debug\dc_event_consumer.dll</HintPath>
+    </Reference>
+    <Reference Include="dc_helper">
+      <HintPath>..\..\out\dc_helper.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <!-- Core -->
+    <Compile Include="AntiBot\Core\IDetectionModule.cs" />
+    <Compile Include="AntiBot\Core\Severity.cs" />
+    <Compile Include="AntiBot\Core\PidScoreTracker.cs" />
+    <Compile Include="AntiBot\Core\ModuleConfig.cs" />
+    <Compile Include="AntiBot\Core\EventBus.cs" />
+    <Compile Include="AntiBot\Core\ScoreBus.cs" />
+    <Compile Include="AntiBot\Core\AntiBotManager.cs" />
+    <Compile Include="AntiBot\Core\ModuleBase.cs" />
+    <!-- Models -->
+    <Compile Include="AntiBot\Models\DetectionResult.cs" />
+    <Compile Include="AntiBot\Models\ScoreUpEventArgs.cs" />
+    <Compile Include="AntiBot\Models\NetworkImportProfile.cs" />
+    <Compile Include="AntiBot\Models\NonStandardState.cs" />
+    <Compile Include="AntiBot\Models\ScanState.cs" />
+    <Compile Include="AntiBot\Models\HiddenState.cs" />
+    <!-- Common -->
+    <Compile Include="AntiBot\Common\NativeMethods.cs" />
+    <Compile Include="AntiBot\Common\PathKey.cs" />
+    <Compile Include="AntiBot\Common\FifoMap.cs" />
+    <Compile Include="AntiBot\Common\WindowInspector.cs" />
+    <Compile Include="AntiBot\Common\AutorunChecker.cs" />
+    <Compile Include="AntiBot\Common\ExclusionChecker.cs" />
+    <Compile Include="AntiBot\Common\PathClassifier.cs" />
+    <Compile Include="AntiBot\Common\NetworkUtils.cs" />
+    <Compile Include="AntiBot\Common\PortClassifier.cs" />
+    <Compile Include="AntiBot\Common\BlacklistStore.cs" />
+    <Compile Include="AntiBot\Common\IatScanner.cs" />
+    <Compile Include="AntiBot\Common\NetworkApiCatalog.cs" />
+    <Compile Include="AntiBot\Common\SuspiciousApiCatalog.cs" />
+    <Compile Include="AntiBot\Common\ScanWindowTracker.cs" />
+    <Compile Include="AntiBot\Common\ScoreLogger.cs" />
+    <!-- Shared (bir marta hisoblanadigan kontekst + umumiy scoring) -->
+    <Compile Include="AntiBot\Shared\ProcessContext.cs" />
+    <Compile Include="AntiBot\Shared\ProcessContextStore.cs" />
+    <Compile Include="AntiBot\Shared\SharedSignals.cs" />
+    <Compile Include="AntiBot\Shared\TrustEvaluator.cs" />
+    <Compile Include="AntiBot\Shared\TrafficStats.cs" />
+    <Compile Include="AntiBot\Shared\BeaconTracker.cs" />
+    <!-- Module 1: C2Connections -->
+    <Compile Include="AntiBot\Modules\C2Connections\C2ConnectionsModule.cs" />
+    <!-- Module 2: HiddenProcessConnections -->
+    <Compile Include="AntiBot\Modules\HiddenProcessConnections\HiddenProcessModule.cs" />
+    <!-- Module 3: NonStandardConnection -->
+    <Compile Include="AntiBot\Modules\NonStandardConnection\NonStandardModule.cs" />
+    <Compile Include="AntiBot\Modules\NonStandardConnection\PortAllowList.cs" />
+    <!-- Module 4: NetworkScanning -->
+    <Compile Include="AntiBot\Modules\NetworkScanning\NetworkScanModule.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+    <None Include="app1.manifest" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
