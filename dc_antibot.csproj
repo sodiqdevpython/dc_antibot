@@ -34,7 +34,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationManifest>app1.manifest</ApplicationManifest>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="dc_event_consumer">
@@ -42,6 +42,9 @@
     </Reference>
     <Reference Include="dc_helper">
       <HintPath>..\..\out\dc_helper.dll</HintPath>
+    </Reference>
+    <Reference Include="APIHook">
+      <HintPath>..\APIHook\bin\Debug\APIHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -104,10 +107,12 @@
     <Compile Include="AntiBot\Modules\NonStandardConnection\PortAllowList.cs" />
     <!-- Module 4: NetworkScanning -->
     <Compile Include="AntiBot\Modules\NetworkScanning\NetworkScanModule.cs" />
+    <!-- Module 5: ScreenCapture -->
+    <Compile Include="AntiBot\Modules\ScreenCapture\ScreenCaptureModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-    <None Include="app1.manifest" />
+    <None Include="app.manifest" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

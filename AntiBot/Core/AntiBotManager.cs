@@ -6,6 +6,7 @@ using dc_antibot.AntiBot.Modules.C2Connections;
 using dc_antibot.AntiBot.Modules.HiddenProcessConnections;
 using dc_antibot.AntiBot.Modules.NetworkScanning;
 using dc_antibot.AntiBot.Modules.NonStandardConnection;
+using dc_antibot.AntiBot.Modules.ScreenCapture;
 
 namespace dc_antibot.AntiBot.Core
 {
@@ -14,10 +15,11 @@ namespace dc_antibot.AntiBot.Core
         private readonly ModuleConfig _config;
         private readonly Dictionary<string, IDetectionModule> _all;
 
-        public C2ConnectionsModule  C2          { get; private set; }
-        public HiddenProcessModule  Hidden      { get; private set; }
-        public NonStandardModule    NonStandard { get; private set; }
-        public NetworkScanModule    NetworkScan { get; private set; }
+        public C2ConnectionsModule  C2            { get; private set; }
+        public HiddenProcessModule  Hidden        { get; private set; }
+        public NonStandardModule    NonStandard   { get; private set; }
+        public NetworkScanModule    NetworkScan   { get; private set; }
+        public ScreenCaptureModule  ScreenCapture { get; private set; }
 
         public bool IsRunning { get; private set; }
 
@@ -26,17 +28,19 @@ namespace dc_antibot.AntiBot.Core
             if (config == null) throw new ArgumentNullException("config");
             _config = config;
 
-            C2          = new C2ConnectionsModule();
-            Hidden      = new HiddenProcessModule();
-            NonStandard = new NonStandardModule();
-            NetworkScan = new NetworkScanModule();
+            C2            = new C2ConnectionsModule();
+            Hidden        = new HiddenProcessModule();
+            NonStandard   = new NonStandardModule();
+            NetworkScan   = new NetworkScanModule();
+            ScreenCapture = new ScreenCaptureModule();
 
             _all = new Dictionary<string, IDetectionModule>(StringComparer.OrdinalIgnoreCase)
             {
-                { C2.Name,          C2 },
-                { Hidden.Name,      Hidden },
-                { NonStandard.Name, NonStandard },
-                { NetworkScan.Name, NetworkScan },
+                { C2.Name,            C2 },
+                { Hidden.Name,        Hidden },
+                { NonStandard.Name,   NonStandard },
+                { NetworkScan.Name,   NetworkScan },
+                { ScreenCapture.Name, ScreenCapture },
             };
         }
 
@@ -69,6 +73,7 @@ namespace dc_antibot.AntiBot.Core
             if (_config.EnableHiddenProcessConnections) SafeStart(Hidden);
             if (_config.EnableNonStandardConnection)    SafeStart(NonStandard);
             if (_config.EnableNetworkScanning)          SafeStart(NetworkScan);
+            if (_config.EnableScreenCapture)            SafeStart(ScreenCapture);
 
             IsRunning = true;
         }
