@@ -15,6 +15,7 @@ namespace dc_antibot.AntiBot.Core
 
         public static event Action<ProcessTraceData>   OnProcess;
         public static event Action<NetworkIOTraceData> OnNetworkIO;
+        public static event Action<ImageLoadTraceData> OnImageLoad;
 
         public static bool IsStarted { get { return _started == 1; } }
 
@@ -35,6 +36,7 @@ namespace dc_antibot.AntiBot.Core
 
             EventBindings.Process.OnEvent   += DispatchProcess;
             EventBindings.NetworkIO.OnEvent += DispatchNetworkIO;
+            EventBindings.ImageLoad.OnEvent += DispatchImageLoad;
 
             EventConsumer.Start();
         }
@@ -47,6 +49,7 @@ namespace dc_antibot.AntiBot.Core
 
             EventBindings.Process.OnEvent   -= DispatchProcess;
             EventBindings.NetworkIO.OnEvent -= DispatchNetworkIO;
+            EventBindings.ImageLoad.OnEvent -= DispatchImageLoad;
         }
 
         private static void DispatchProcess(ProcessTraceData data)
@@ -60,6 +63,13 @@ namespace dc_antibot.AntiBot.Core
         {
             if (IsExcludedPid(data.ProcessId)) return;
             var h = OnNetworkIO;
+            if (h != null) SafeInvoke(() => h(data));
+        }
+
+        private static void DispatchImageLoad(ImageLoadTraceData data)
+        {
+            if (IsExcludedPid(data.ProcessId)) return;
+            var h = OnImageLoad;
             if (h != null) SafeInvoke(() => h(data));
         }
 

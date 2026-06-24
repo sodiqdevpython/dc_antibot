@@ -14,7 +14,7 @@
     <Deterministic>true</Deterministic>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -37,14 +37,14 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="APIHook">
+      <HintPath>..\APIHook\bin\Debug\APIHook.dll</HintPath>
+    </Reference>
     <Reference Include="dc_event_consumer">
       <HintPath>..\dc_driver\dc_event_consumer\bin\Debug\dc_event_consumer.dll</HintPath>
     </Reference>
     <Reference Include="dc_helper">
       <HintPath>..\..\out\dc_helper.dll</HintPath>
-    </Reference>
-    <Reference Include="APIHook">
-      <HintPath>..\APIHook\bin\Debug\APIHook.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -109,10 +109,25 @@
     <Compile Include="AntiBot\Modules\NetworkScanning\NetworkScanModule.cs" />
     <!-- Module 5: ScreenCapture -->
     <Compile Include="AntiBot\Modules\ScreenCapture\ScreenCaptureModule.cs" />
+    <!-- Module 6: Keylogger -->
+    <Compile Include="AntiBot\Modules\Keylogger\KeyloggerModule.cs" />
+    <!-- Module 7: Microphone -->
+    <Compile Include="AntiBot\Modules\Microphone\MicrophoneModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="apihook\inject32.exe">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="apihook\scrhook32.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="apihook\scrhook64.dll">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -6,6 +6,8 @@ using dc_antibot.AntiBot.Modules.C2Connections;
 using dc_antibot.AntiBot.Modules.HiddenProcessConnections;
 using dc_antibot.AntiBot.Modules.NetworkScanning;
 using dc_antibot.AntiBot.Modules.NonStandardConnection;
+using dc_antibot.AntiBot.Modules.Keylogger;
+using dc_antibot.AntiBot.Modules.Microphone;
 using dc_antibot.AntiBot.Modules.ScreenCapture;
 
 namespace dc_antibot.AntiBot.Core
@@ -20,6 +22,8 @@ namespace dc_antibot.AntiBot.Core
         public NonStandardModule    NonStandard   { get; private set; }
         public NetworkScanModule    NetworkScan   { get; private set; }
         public ScreenCaptureModule  ScreenCapture { get; private set; }
+        public KeyloggerModule      Keylogger     { get; private set; }
+        public MicrophoneModule     Microphone    { get; private set; }
 
         public bool IsRunning { get; private set; }
 
@@ -33,6 +37,8 @@ namespace dc_antibot.AntiBot.Core
             NonStandard   = new NonStandardModule();
             NetworkScan   = new NetworkScanModule();
             ScreenCapture = new ScreenCaptureModule();
+            Keylogger     = new KeyloggerModule();
+            Microphone    = new MicrophoneModule();
 
             _all = new Dictionary<string, IDetectionModule>(StringComparer.OrdinalIgnoreCase)
             {
@@ -41,6 +47,8 @@ namespace dc_antibot.AntiBot.Core
                 { NonStandard.Name,   NonStandard },
                 { NetworkScan.Name,   NetworkScan },
                 { ScreenCapture.Name, ScreenCapture },
+                { Keylogger.Name,     Keylogger },
+                { Microphone.Name,    Microphone },
             };
         }
 
@@ -74,6 +82,8 @@ namespace dc_antibot.AntiBot.Core
             if (_config.EnableNonStandardConnection)    SafeStart(NonStandard);
             if (_config.EnableNetworkScanning)          SafeStart(NetworkScan);
             if (_config.EnableScreenCapture)            SafeStart(ScreenCapture);
+            if (_config.EnableKeylogger)                SafeStart(Keylogger);
+            if (_config.EnableMicrophone)               SafeStart(Microphone);
 
             IsRunning = true;
         }

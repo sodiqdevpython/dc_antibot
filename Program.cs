@@ -15,7 +15,9 @@ namespace dc_antibot
             //antibot.Hidden.OnDetection      += OnHiddenDetection;
             //antibot.NonStandard.OnDetection += OnNonStandardDetection;
             //antibot.NetworkScan.OnDetection += OnNetworkScanDetection;
-            antibot.ScreenCapture.OnDetection += OnScreenCaptureDetection;
+            //antibot.ScreenCapture.OnDetection += OnScreenCaptureDetection;
+            antibot.Keylogger.OnDetection     += OnKeyloggerDetection;
+            antibot.Microphone.OnDetection    += OnMicrophoneDetection;
 
             antibot.Start();
 
@@ -65,6 +67,20 @@ namespace dc_antibot
         {
             Console.WriteLine(
                 "[SCREEN ALERT] PID:" + r.Pid + " " + (r.ProcessName ?? "?") +
+                " | " + r.Reason);
+        }
+
+        static void OnKeyloggerDetection(object sender, DetectionResult r)
+        {
+            Console.WriteLine(
+                "[KEYLOGGER ALERT] PID:" + r.Pid + " " + (r.ProcessName ?? "?") +
+                " | " + r.Reason);
+        }
+
+        static void OnMicrophoneDetection(object sender, DetectionResult r)
+        {
+            Console.WriteLine(
+                "[MICROPHONE ALERT] PID:" + r.Pid + " " + (r.ProcessName ?? "?") +
                 " | " + r.Reason);
         }
     }
