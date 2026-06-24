@@ -39,7 +39,7 @@ namespace dc_antibot.AntiBot.Modules.Keylogger
 
         protected override void OnStart()
         {
-            _monitor = new ApiMonitor();
+            _monitor = new ApiMonitor(ApiHookNative.Dir);
             _monitor.ApiCalled += OnApiCalled;
             EventBus.OnProcess += OnProcess;
         }

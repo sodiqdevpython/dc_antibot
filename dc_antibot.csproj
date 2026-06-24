@@ -98,6 +98,7 @@
     <Compile Include="AntiBot\Shared\TrustEvaluator.cs" />
     <Compile Include="AntiBot\Shared\TrafficStats.cs" />
     <Compile Include="AntiBot\Shared\BeaconTracker.cs" />
+    <Compile Include="AntiBot\Shared\ApiHookNative.cs" />
     <!-- Module 1: C2Connections -->
     <Compile Include="AntiBot\Modules\C2Connections\C2ConnectionsModule.cs" />
     <!-- Module 2: HiddenProcessConnections -->
