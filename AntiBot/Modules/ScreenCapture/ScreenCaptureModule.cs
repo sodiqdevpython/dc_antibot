@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using APIHook;
 using dc_antibot.AntiBot.Core;
@@ -16,13 +16,13 @@ namespace dc_antibot.AntiBot.Modules.ScreenCapture
 
         private static readonly HashSet<string> ScreenApis = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
-            "acquirenextframe",                
-            "printwindow",   
+            "acquirenextframe",
+            "printwindow",
             "bitblt", "stretchblt", "maskblt", "plgblt",
-            "getdc", "getwindowdc",            
+            "getdc", "getwindowdc",
             "createdc", "createdca", "createdcw",
             "createcompatibledc", "createcompatiblebitmap",
-            "getdibits",                       
+            "getdibits",
         };
 
         private static bool IsScreenCaptureApi(string api)
@@ -131,3 +131,4 @@ namespace dc_antibot.AntiBot.Modules.ScreenCapture
         }
     }
 }
+*/

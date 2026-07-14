@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.Collections.Generic;
 using APIHook;
 using dc_antibot.AntiBot.Core;
@@ -129,3 +129,4 @@ namespace dc_antibot.AntiBot.Modules.Keylogger
         }
     }
 }
+*/

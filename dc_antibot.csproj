@@ -37,10 +37,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="APIHook">
-      <HintPath>..\APIHook\bin\Debug\APIHook.dll</HintPath>
-    </Reference>
-    <Reference Include="dc_event_consumer">
+    <Reference Include="dc_event_consumer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dc_driver\dc_event_consumer\bin\Debug\dc_event_consumer.dll</HintPath>
     </Reference>
     <Reference Include="dc_helper">
@@ -118,17 +116,6 @@
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="apihook\inject32.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="apihook\scrhook32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="apihook\scrhook64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

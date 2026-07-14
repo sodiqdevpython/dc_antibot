@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using dc_event_consumer.Bindings;
-using dc_event_consumer.Core;
+using dc_event_consumer;
 using dc_event_consumer.Models;
 
 namespace dc_antibot.AntiBot.Core
@@ -34,9 +33,9 @@ namespace dc_antibot.AntiBot.Core
         {
             if (Interlocked.CompareExchange(ref _started, 1, 0) != 0) return;
 
-            EventBindings.Process.OnEvent   += DispatchProcess;
-            EventBindings.NetworkIO.OnEvent += DispatchNetworkIO;
-            EventBindings.ImageLoad.OnEvent += DispatchImageLoad;
+            EventBindings.Process   += DispatchProcess;
+            EventBindings.NetworkIO += DispatchNetworkIO;
+            EventBindings.ImageLoad += DispatchImageLoad;
 
             EventConsumer.Start();
         }
@@ -47,9 +46,9 @@ namespace dc_antibot.AntiBot.Core
 
             EventConsumer.Stop();
 
-            EventBindings.Process.OnEvent   -= DispatchProcess;
-            EventBindings.NetworkIO.OnEvent -= DispatchNetworkIO;
-            EventBindings.ImageLoad.OnEvent -= DispatchImageLoad;
+            EventBindings.Process -= DispatchProcess;
+            EventBindings.NetworkIO -= DispatchNetworkIO;
+            EventBindings.ImageLoad -= DispatchImageLoad;
         }
 
         private static void DispatchProcess(ProcessTraceData data)
