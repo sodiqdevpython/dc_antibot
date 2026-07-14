@@ -37,9 +37,6 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="APIHook">
-      <HintPath>..\APIHook\bin\Debug\APIHook.dll</HintPath>
-    </Reference>
     <Reference Include="dc_event_consumer">
       <HintPath>..\dc_driver\dc_event_consumer\bin\Debug\dc_event_consumer.dll</HintPath>
     </Reference>
@@ -68,6 +65,7 @@
     <Compile Include="AntiBot\Core\ScoreBus.cs" />
     <Compile Include="AntiBot\Core\AntiBotManager.cs" />
     <Compile Include="AntiBot\Core\ModuleBase.cs" />
+    <Compile Include="AntiBot\Core\EventPump.cs" />
     <!-- Models -->
     <Compile Include="AntiBot\Models\DetectionResult.cs" />
     <Compile Include="AntiBot\Models\ScoreUpEventArgs.cs" />
@@ -98,7 +96,7 @@
     <Compile Include="AntiBot\Shared\TrustEvaluator.cs" />
     <Compile Include="AntiBot\Shared\TrafficStats.cs" />
     <Compile Include="AntiBot\Shared\BeaconTracker.cs" />
-    <Compile Include="AntiBot\Shared\ApiHookNative.cs" />
+    <Compile Include="AntiBot\Shared\CertSnapshot.cs" />
     <!-- Module 1: C2Connections -->
     <Compile Include="AntiBot\Modules\C2Connections\C2ConnectionsModule.cs" />
     <!-- Module 2: HiddenProcessConnections -->
@@ -108,27 +106,12 @@
     <Compile Include="AntiBot\Modules\NonStandardConnection\PortAllowList.cs" />
     <!-- Module 4: NetworkScanning -->
     <Compile Include="AntiBot\Modules\NetworkScanning\NetworkScanModule.cs" />
-    <!-- Module 5: ScreenCapture -->
-    <Compile Include="AntiBot\Modules\ScreenCapture\ScreenCaptureModule.cs" />
-    <!-- Module 6: Keylogger -->
-    <Compile Include="AntiBot\Modules\Keylogger\KeyloggerModule.cs" />
-    <!-- Module 7: Microphone -->
+    <!-- Module 5: Microphone -->
     <Compile Include="AntiBot\Modules\Microphone\MicrophoneModule.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="app.manifest" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="apihook\inject32.exe">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="apihook\scrhook32.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="apihook\scrhook64.dll">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

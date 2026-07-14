@@ -43,7 +43,7 @@ namespace dc_antibot.AntiBot.Modules.C2Connections
         {
             if (!NetworkUtils.IsPublic(data.RemoteAddress)) return;
 
-            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName);
+            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName, data.CertInfo);
             if (ctx == null) return;
             if (!ctx.IsAnalyzable) return;  
 

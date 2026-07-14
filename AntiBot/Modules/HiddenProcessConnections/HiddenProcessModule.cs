@@ -40,7 +40,7 @@ namespace dc_antibot.AntiBot.Modules.HiddenProcessConnections
 
             if (!BlacklistStore.Contains(data.RemoteAddress)) return;
 
-            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName);
+            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName, data.CertInfo);
             if (ctx == null) return;
             if (!ctx.IsBackground) return;
 

@@ -1,6 +1,5 @@
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Core;
-using dc_helper.digital_signer;
 
 namespace dc_antibot.AntiBot.Shared
 {
@@ -10,17 +9,17 @@ namespace dc_antibot.AntiBot.Shared
         {
             if (tracker == null || ctx == null || !ctx.IsAnalyzable) return;
 
-            SignatureInfo s = ctx.Signature;
-            if (s == null) return;
+            var c = ctx.Cert;
+            if (c == null || !c.IsChecked) return;
 
-            if (s.IsBlacklisted)
+            if (c.IsBlacklisted)
                 tracker.AddSignal("sig:blacklist", 6f,
-                    "Certificate blacklisted: " + (s.BlacklistReason ?? "?") + " (" + s.ThreatLevel + ")");
-            else if (s.IsRevoked)
+                    "Certificate blacklisted (" + (c.PrimarySubject ?? "?") + ")");
+            else if (c.IsRevoked)
                 tracker.AddSignal("sig:revoked", 5f, "Certificate revoked");
-            else if (s.IsSigned && !s.IsValid)
-                tracker.AddSignal("sig:invalid", 4f, "Invalid signature (Status=0x" + s.Status.ToString("X") + ")");
-            else if (!s.IsSigned)
+            else if (c.IsSigned && !c.IsValid)
+                tracker.AddSignal("sig:invalid", 4f, "Invalid signature (" + c.Result + ")");
+            else if (!c.IsSigned)
                 tracker.AddSignal("sig:unsigned", 3f, "Unsigned binary");
         }
 
@@ -47,12 +46,12 @@ namespace dc_antibot.AntiBot.Shared
 
             if (!ctx.IsBackground) return false;
 
-            var s = ctx.Signature;
-            bool sigBad = (s == null)
-                || !s.IsSigned
-                || !s.IsValid
-                || s.IsRevoked
-                || s.IsBlacklisted;
+            var c = ctx.Cert;
+            bool sigBad = (c == null)
+                || !c.IsSigned
+                || !c.IsValid
+                || c.IsRevoked
+                || c.IsBlacklisted;
             if (!sigBad) return false;
 
             return true;

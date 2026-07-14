@@ -41,7 +41,7 @@ namespace dc_antibot.AntiBot.Modules.NonStandardConnection
             string proto;
             if (!PortClassifier.IsWatchedProtocol(data.RemotePort, out proto)) return;
 
-            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName);
+            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName, data.CertInfo);
             if (ctx == null) return;
 
             if (ctx.ShouldSkip) return;
@@ -85,7 +85,7 @@ namespace dc_antibot.AntiBot.Modules.NonStandardConnection
 
         private static bool IsSignedClean(ProcessContext ctx)
         {
-            return TrustEvaluator.IsSignedAndClean(ctx.Signature);
+            return TrustEvaluator.IsSignedAndClean(ctx.Cert);
         }
     }
 }

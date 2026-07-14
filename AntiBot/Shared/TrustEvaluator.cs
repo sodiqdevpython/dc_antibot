@@ -1,37 +1,43 @@
-using dc_helper.digital_signer;
+using dc_event_consumer.Ipc;
 
 namespace dc_antibot.AntiBot.Shared
 {
 
     public static class TrustEvaluator
     {
-       
         private const float SignedMultiplier = 0.3f;
 
-        public static bool ShouldSkip(SignatureInfo sig)
+        public static bool ShouldSkip(CertSnapshot c)
         {
-            if (sig == null) return false;
-            if (!sig.IsMicrosoft) return false;
-            if (!sig.IsValid) return false;
-            if (sig.IsRevoked) return false;
-            if (sig.IsBlacklisted) return false;
+            if (c == null) return false;
+            if (!c.IsMicrosoft) return false;
+            if (!c.IsValid) return false;
+            if (c.IsRevoked) return false;
+            if (c.IsBlacklisted) return false;
             return true;
         }
 
-        public static bool IsSignedAndClean(SignatureInfo sig)
+        public static bool IsSignedAndClean(CertSnapshot c)
         {
-            if (sig == null) return false;
-            return sig.IsSigned && sig.IsValid && !sig.IsRevoked && !sig.IsBlacklisted;
+            if (c == null) return false;
+            return c.IsSigned && c.IsValid && !c.IsRevoked && !c.IsBlacklisted;
         }
 
-        public static float ScoreMultiplier(SignatureInfo sig)
+        public static float ScoreMultiplier(CertSnapshot c)
         {
-            return IsSignedAndClean(sig) ? SignedMultiplier : 1.0f;
+            return IsSignedAndClean(c) ? SignedMultiplier : 1.0f;
         }
 
-        public static int RiskScore(SignatureInfo sig)
+        public static int RiskScore(CertSnapshot c)
         {
-            return sig == null ? 70 : sig.Score;
+            if (c == null || !c.IsChecked) return 70;
+            if (c.IsBlacklisted) return 95;
+            if (c.IsRevoked) return 95;
+            if (!c.IsSigned) return 80;
+            if (c.IsUntrusted) return 75;
+            if (c.IsExpired) return 60;
+            if (!c.IsValid) return 70;
+            return c.IsMicrosoft ? 5 : 20;
         }
     }
 }

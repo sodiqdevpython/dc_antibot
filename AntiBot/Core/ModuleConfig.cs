@@ -6,8 +6,6 @@ namespace dc_antibot.AntiBot.Core
         public bool EnableHiddenProcessConnections { get; set; }
         public bool EnableNonStandardConnection { get; set; }
         public bool EnableNetworkScanning { get; set; }
-        public bool EnableScreenCapture { get; set; }
-        public bool EnableKeylogger { get; set; }
         public bool EnableMicrophone { get; set; }
 
         public static ModuleConfig AllEnabled()
@@ -18,8 +16,6 @@ namespace dc_antibot.AntiBot.Core
                 EnableHiddenProcessConnections = true,
                 EnableNonStandardConnection = true,
                 EnableNetworkScanning = true,
-                EnableScreenCapture = true,
-                EnableKeylogger = true,
                 EnableMicrophone = true,
             };
         }

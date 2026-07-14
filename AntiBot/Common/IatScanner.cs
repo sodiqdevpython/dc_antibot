@@ -135,7 +135,6 @@ namespace dc_antibot.AntiBot.Common
                                     }
                                 }
                             }
-
                             pos += step;
                             fnCount++;
                         }

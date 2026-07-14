@@ -44,7 +44,7 @@ namespace dc_antibot.AntiBot.Modules.NetworkScanning
             if (NetworkUtils.IsLoopback(data.RemoteAddress)) return;
             bool isPrivate = NetworkUtils.IsPrivate(data.RemoteAddress);
 
-            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName);
+            var ctx = ProcessContextStore.Get(data.ProcessId, data.ProcessImagePath, data.ProcessName, data.CertInfo);
             if (ctx == null) return;
             if (ctx.ShouldSkip) return;
 

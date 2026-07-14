@@ -1,8 +1,7 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using dc_event_consumer.Bindings;
-using dc_event_consumer.Core;
+using dc_event_consumer;
 using dc_event_consumer.Models;
 
 namespace dc_antibot.AntiBot.Core
@@ -10,12 +9,18 @@ namespace dc_antibot.AntiBot.Core
 
     public static class EventBus
     {
-        private static int _started; // 0 = stopped, 1 = started
+        private const int QueueCapacity = 8192;
+
+        private static int _started;
         private static readonly int OwnPid = SafeGetOwnPid();
 
         public static event Action<ProcessTraceData>   OnProcess;
         public static event Action<NetworkIOTraceData> OnNetworkIO;
         public static event Action<ImageLoadTraceData> OnImageLoad;
+
+        private static EventPump<ProcessTraceData>   _processPump;
+        private static EventPump<NetworkIOTraceData> _networkPump;
+        private static EventPump<ImageLoadTraceData> _imagePump;
 
         public static bool IsStarted { get { return _started == 1; } }
 
@@ -34,9 +39,20 @@ namespace dc_antibot.AntiBot.Core
         {
             if (Interlocked.CompareExchange(ref _started, 1, 0) != 0) return;
 
-            EventBindings.Process.OnEvent   += DispatchProcess;
-            EventBindings.NetworkIO.OnEvent += DispatchNetworkIO;
-            EventBindings.ImageLoad.OnEvent += DispatchImageLoad;
+            _processPump = new EventPump<ProcessTraceData>(
+                "Process", QueueCapacity, DispatchProcess, TracePools.Return);
+            _networkPump = new EventPump<NetworkIOTraceData>(
+                "NetworkIO", QueueCapacity, DispatchNetworkIO, TracePools.Return);
+            _imagePump   = new EventPump<ImageLoadTraceData>(
+                "ImageLoad", QueueCapacity, DispatchImageLoad, TracePools.Return);
+
+            _processPump.Start();
+            _networkPump.Start();
+            _imagePump.Start();
+
+            EventBindings.Process   += EnqueueProcess;
+            EventBindings.NetworkIO += EnqueueNetworkIO;
+            EventBindings.ImageLoad += EnqueueImageLoad;
 
             EventConsumer.Start();
         }
@@ -47,35 +63,57 @@ namespace dc_antibot.AntiBot.Core
 
             EventConsumer.Stop();
 
-            EventBindings.Process.OnEvent   -= DispatchProcess;
-            EventBindings.NetworkIO.OnEvent -= DispatchNetworkIO;
-            EventBindings.ImageLoad.OnEvent -= DispatchImageLoad;
+            EventBindings.Process   -= EnqueueProcess;
+            EventBindings.NetworkIO -= EnqueueNetworkIO;
+            EventBindings.ImageLoad -= EnqueueImageLoad;
+
+            if (_processPump != null) _processPump.Stop();
+            if (_networkPump != null) _networkPump.Stop();
+            if (_imagePump   != null) _imagePump.Stop();
+        }
+
+        private static void EnqueueProcess(ProcessTraceData data)
+        {
+            if (data == null) return;
+            if (IsExcludedPid(data.ProcessId)) { TracePools.Return(data); return; }
+            _processPump.Enqueue(data);
+        }
+
+        private static void EnqueueNetworkIO(NetworkIOTraceData data)
+        {
+            if (data == null) return;
+            if (IsExcludedPid(data.ProcessId)) { TracePools.Return(data); return; }
+            _networkPump.Enqueue(data);
+        }
+
+        private static void EnqueueImageLoad(ImageLoadTraceData data)
+        {
+            if (data == null) return;
+            if (IsExcludedPid(data.ProcessId)) { TracePools.Return(data); return; }
+            _imagePump.Enqueue(data);
         }
 
         private static void DispatchProcess(ProcessTraceData data)
         {
-            if (IsExcludedPid(data.ProcessId)) return;
             var h = OnProcess;
             if (h != null) SafeInvoke(() => h(data));
         }
 
         private static void DispatchNetworkIO(NetworkIOTraceData data)
         {
-            if (IsExcludedPid(data.ProcessId)) return;
             var h = OnNetworkIO;
             if (h != null) SafeInvoke(() => h(data));
         }
 
         private static void DispatchImageLoad(ImageLoadTraceData data)
         {
-            if (IsExcludedPid(data.ProcessId)) return;
             var h = OnImageLoad;
             if (h != null) SafeInvoke(() => h(data));
         }
 
         private static void SafeInvoke(Action action)
         {
-            try { action(); } catch { /* dispatcher yiqilmasligi kerak */ }
+            try { action(); } catch { }
         }
     }
 }

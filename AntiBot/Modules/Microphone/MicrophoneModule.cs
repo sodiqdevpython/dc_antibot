@@ -83,15 +83,15 @@ namespace dc_antibot.AntiBot.Modules.Microphone
             int pid = data.ProcessId;
             string path = data.ProcessImagePath;
 
-            var ctx = ProcessContextStore.Get(pid, path, data.ProcessName);
+            var ctx = ProcessContextStore.Get(pid, path, data.ProcessName, data.CertInfo);
             if (ctx == null || !ctx.IsAnalyzable) return;
 
-            if (TrustEvaluator.IsSignedAndClean(ctx.Signature)) return;
+            if (TrustEvaluator.IsSignedAndClean(ctx.Cert)) return;
 
             if (!HasMicrophoneConsent(ctx.Path)) return;
 
-            var s = ctx.Signature;
-            bool blacklisted = (s != null && s.IsBlacklisted);
+            var c = ctx.Cert;
+            bool blacklisted = (c != null && c.IsBlacklisted);
             if (!blacklisted && !ctx.IsBackground) return;
 
             lock (_lock)

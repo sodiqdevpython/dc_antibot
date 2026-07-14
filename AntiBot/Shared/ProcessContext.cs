@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Models;
-using dc_helper.digital_signer;
+using dc_event_consumer.Ipc;
 
 namespace dc_antibot.AntiBot.Shared
 {
@@ -18,11 +18,11 @@ namespace dc_antibot.AntiBot.Shared
 
         private bool _analyzableResolved;  private bool _isAnalyzable;
         private bool _backgroundResolved;  private bool _isBackground;
-        private bool _sigResolved;         private SignatureInfo _signature;
+        private CertSnapshot _cert;
         private bool _iatResolved;         private NetworkImportProfile _netProfile;
         private bool _suspResolved;        private SuspiciousApiProfile _suspProfile;
         private bool _autorunResolved;     private string _autorunLocation;
-        private bool _lateAutorunChecked;  
+        private bool _lateAutorunChecked;
         private bool _exclResolved;        private bool _avExcluded; private string _avExclusionMatch;
         private bool _unusualPathResolved; private UnusualPathLevel _unusualPathLevel;
 
@@ -66,6 +66,23 @@ namespace dc_antibot.AntiBot.Shared
             }
         }
 
+        public void ApplyCert(CertificateInfo info)
+        {
+            if (info == null) return;
+            var snap = CertSnapshot.From(info);
+            if (snap == null) return;
+
+            lock (_lock)
+            {
+                if (snap.IsBetterThan(_cert)) _cert = snap;
+            }
+        }
+
+        public CertSnapshot Cert
+        {
+            get { lock (_lock) { return _cert; } }
+        }
+
         public bool IsAnalyzable
         {
             get
@@ -96,22 +113,6 @@ namespace dc_antibot.AntiBot.Shared
                     _backgroundResolved = true;
                     _isBackground = (SessionId == 0) || !WindowInspector.HasVisibleWindow(Pid);
                     return _isBackground;
-                }
-            }
-        }
-
-        public SignatureInfo Signature
-        {
-            get
-            {
-                lock (_lock)
-                {
-                    if (_sigResolved) return _signature;
-                    _sigResolved = true;
-                    if (string.IsNullOrEmpty(Path) || !FileExistsSafe(Path)) { _signature = null; return null; }
-                    try { _signature = DigitalSignerVerify.Verify(Path, true, false); }
-                    catch { _signature = new SignatureInfo { FilePath = Path, Error = "verify-exception" }; }
-                    return _signature;
                 }
             }
         }
@@ -218,29 +219,19 @@ namespace dc_antibot.AntiBot.Shared
 
         public bool ShouldSkip
         {
-            get { return TrustEvaluator.ShouldSkip(Signature); }
+            get { return TrustEvaluator.ShouldSkip(Cert); }
         }
 
         public float ScoreMultiplier
         {
-            get { return TrustEvaluator.ScoreMultiplier(Signature); }
+            get { return TrustEvaluator.ScoreMultiplier(Cert); }
         }
 
         public string SignatureSummary()
         {
-            var s = Signature;
-            if (s == null) return IsAnalyzable ? "?" : "unreadable";
-            if (s.IsBlacklisted) return "BLACKLISTED-cert";
-            if (s.IsRevoked) return "Revoked";
-            if (!s.IsSigned) return "Unsigned";
-            if (!s.IsValid) return "Invalid";
-            return s.IsMicrosoft ? "Signed/MS" : "Signed";
-        }
-
-
-        private static bool FileExistsSafe(string p)
-        {
-            try { return File.Exists(p); } catch { return false; }
+            var c = Cert;
+            if (c == null) return IsAnalyzable ? "?" : "unreadable";
+            return c.SummaryTag();
         }
 
         private static string TryGetPath(int pid)
