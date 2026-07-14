@@ -8,7 +8,7 @@ namespace dc_antibot.AntiBot.Common
     {
         private static readonly object _lock = new object();
 
-        public static bool Enabled = true;
+        public static bool Enabled = false;
 
         public static string FileName = "score_log.txt";
 
