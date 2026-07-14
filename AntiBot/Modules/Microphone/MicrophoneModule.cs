@@ -144,21 +144,32 @@ namespace dc_antibot.AntiBot.Modules.Microphone
 
         private static bool HasMicrophoneConsent(string processPath)
         {
-            if (string.IsNullOrEmpty(processPath)) return false;
-            try
+            string processFileName = Path.GetFileName(processPath);
+
+            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(ConsentStorePath))
             {
-                using (var root = Registry.CurrentUser.OpenSubKey(ConsentStorePath))
+                if (key != null)
                 {
-                    if (root == null) return false;
-                    foreach (var appName in root.GetSubKeyNames())
+                    foreach (string appName in key.GetSubKeyNames())
                     {
-                        string exePath = appName.Replace('#', '\\');
-                        if (string.Equals(exePath, processPath, StringComparison.OrdinalIgnoreCase))
-                            return true;
+                        using (RegistryKey appKey = key.OpenSubKey(appName))
+                        {
+                            if (appKey != null)
+                            {
+                                string exePath = appName.Replace('#', '\\');
+
+                                string exeFileName = Path.GetFileName(exePath);
+
+                                if (string.Equals(exeFileName, processFileName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
                     }
                 }
             }
-            catch { }
+
             return false;
         }
 
