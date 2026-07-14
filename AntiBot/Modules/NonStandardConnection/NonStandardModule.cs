@@ -1,9 +1,11 @@
-using System.Collections.Concurrent;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Core;
 using dc_antibot.AntiBot.Models;
 using dc_antibot.AntiBot.Shared;
 using dc_event_consumer.Models;
+using dc_helper.Models;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace dc_antibot.AntiBot.Modules.NonStandardConnection
 {
@@ -74,6 +76,15 @@ namespace dc_antibot.AntiBot.Modules.NonStandardConnection
                 ProcessPath = data.ProcessImagePath,
                 Score = score,
                 Reason = reason,
+                MitreAttacks = new List<MitreAttack>
+                {
+                    new MitreAttack
+                    {
+                        TechniqueId = "T1571",
+                        TechniqueName = "Non-Standard Port",
+                        Tactic = "Command and Control"
+                    }
+                },
                 Details = {
                     { "protocol", proto },
                     { "remote", data.RemoteAddress + ":" + data.RemotePort },

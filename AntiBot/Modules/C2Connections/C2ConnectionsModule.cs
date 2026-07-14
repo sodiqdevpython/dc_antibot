@@ -1,9 +1,11 @@
-using System;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Core;
 using dc_antibot.AntiBot.Models;
 using dc_antibot.AntiBot.Shared;
 using dc_event_consumer.Models;
+using dc_helper.Models;
+using System;
+using System.Collections.Generic;
 
 namespace dc_antibot.AntiBot.Modules.C2Connections
 {
@@ -111,6 +113,15 @@ namespace dc_antibot.AntiBot.Modules.C2Connections
                 ProcessPath = data.ProcessImagePath,
                 Score = tracker.Score,
                 Reason = tracker.JoinedReasons,
+                MitreAttacks = new List<MitreAttack>
+                {
+                    new MitreAttack
+                    {
+                        TechniqueId = "TA0011",
+                        TechniqueName = "Command and Control",
+                        Tactic = "Command and Control"
+                    }
+                },
                 Details = {
                     { "remote", data.RemoteAddress + ":" + data.RemotePort },
                     { "signature", ctx.SignatureSummary() },

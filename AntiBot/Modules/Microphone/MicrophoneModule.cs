@@ -1,13 +1,14 @@
+using dc_antibot.AntiBot.Core;
+using dc_antibot.AntiBot.Models;
+using dc_antibot.AntiBot.Shared;
+using dc_event_consumer.Models;
+using dc_helper.Models;
+using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using dc_antibot.AntiBot.Core;
-using dc_antibot.AntiBot.Models;
-using dc_antibot.AntiBot.Shared;
-using dc_event_consumer.Models;
-using Microsoft.Win32;
 
 namespace dc_antibot.AntiBot.Modules.Microphone
 {
@@ -135,6 +136,15 @@ namespace dc_antibot.AntiBot.Modules.Microphone
                 ProcessName = pa.ProcessName,
                 ProcessPath = pa.Path,
                 Reason = reason,
+                MitreAttacks = new List<MitreAttack>
+                {
+                    new MitreAttack
+                    {
+                        TechniqueId = "T1123",
+                        TechniqueName = "Audio Capture",
+                        Tactic = "Collection"
+                    }
+                },
                 Details = {
                     { "dlls", dlls },
                     { "count", pa.Dlls.Count },

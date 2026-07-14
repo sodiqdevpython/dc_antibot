@@ -1,6 +1,7 @@
+using dc_antibot.AntiBot.Core;
+using dc_helper.Models;
 using System;
 using System.Collections.Generic;
-using dc_antibot.AntiBot.Core;
 
 namespace dc_antibot.AntiBot.Models
 {
@@ -15,6 +16,7 @@ namespace dc_antibot.AntiBot.Models
         public string Reason { get; set; }
         public DateTime DetectedAt { get; set; }
         public Dictionary<string, object> Details { get; set; }
+        public List<MitreAttack> MitreAttacks { get; set; } = new List<MitreAttack>();
 
         public DetectionResult()
         {

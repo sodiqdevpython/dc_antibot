@@ -1,9 +1,11 @@
-using System.Collections.Concurrent;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Core;
 using dc_antibot.AntiBot.Models;
 using dc_antibot.AntiBot.Shared;
 using dc_event_consumer.Models;
+using dc_helper.Models;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace dc_antibot.AntiBot.Modules.NetworkScanning
 {
@@ -102,7 +104,16 @@ namespace dc_antibot.AntiBot.Modules.NetworkScanning
                     Details = {
                         { "type", "lan-scan" },
                         { "uniquePrivateIps", lanIps },
-                    }
+                    },
+                    MitreAttacks = new List<MitreAttack>
+                    {
+                        new MitreAttack
+                        {
+                            TechniqueId = "T1046",
+                            TechniqueName = "Network Service Discovery",
+                            Tactic = "Discovery"
+                        }
+                    },
                 });
             }
         }

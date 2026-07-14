@@ -1,9 +1,11 @@
-using System.Collections.Concurrent;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Core;
 using dc_antibot.AntiBot.Models;
 using dc_antibot.AntiBot.Shared;
 using dc_event_consumer.Models;
+using dc_helper.Models;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 
 namespace dc_antibot.AntiBot.Modules.HiddenProcessConnections
 {
@@ -57,6 +59,15 @@ namespace dc_antibot.AntiBot.Modules.HiddenProcessConnections
                 ProcessPath = data.ProcessImagePath,
                 Score = 10,
                 Reason = "Hidden process connected to blacklisted IP: " + data.RemoteAddress + ":" + data.RemotePort,
+                MitreAttacks = new List<MitreAttack>
+                {
+                    new MitreAttack
+                    {
+                        TechniqueId = "T1496",
+                        TechniqueName = "Hide Artifacts / Rootkit",
+                        Tactic = "Defense Evasion"
+                    }
+                },
                 Details = {
                     { "remote", data.RemoteAddress + ":" + data.RemotePort },
                     { "sessionId", (int)ctx.SessionId },
