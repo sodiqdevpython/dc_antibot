@@ -117,7 +117,7 @@ namespace dc_antibot.AntiBot.Modules.C2Connections
                 {
                     new MitreAttack
                     {
-                        TechniqueId = "TA0011",
+                        TechniqueId = "T1071",
                         TechniqueName = "Command and Control",
                         Tactic = "Command and Control"
                     }

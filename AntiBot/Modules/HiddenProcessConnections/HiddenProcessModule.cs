@@ -63,7 +63,7 @@ namespace dc_antibot.AntiBot.Modules.HiddenProcessConnections
                 {
                     new MitreAttack
                     {
-                        TechniqueId = "T1496",
+                        TechniqueId = "T1564",
                         TechniqueName = "Hide Artifacts / Rootkit",
                         Tactic = "Defense Evasion"
                     }
