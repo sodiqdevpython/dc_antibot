@@ -37,7 +37,8 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="dc_event_consumer">
+    <Reference Include="dc_event_consumer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\dc_driver\dc_event_consumer\bin\Debug\dc_event_consumer.dll</HintPath>
     </Reference>
     <Reference Include="dc_helper">
@@ -65,7 +66,7 @@
     <Compile Include="AntiBot\Core\ScoreBus.cs" />
     <Compile Include="AntiBot\Core\AntiBotManager.cs" />
     <Compile Include="AntiBot\Core\ModuleBase.cs" />
-    <Compile Include="AntiBot\Core\EventPump.cs" />
+    <Compile Include="AntiBot\Core\SpscBuffer.cs" />
     <!-- Models -->
     <Compile Include="AntiBot\Models\DetectionResult.cs" />
     <Compile Include="AntiBot\Models\ScoreUpEventArgs.cs" />
