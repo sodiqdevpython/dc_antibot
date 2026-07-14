@@ -10,11 +10,11 @@ namespace dc_antibot
         {
             var antibot = new AntiBotManager(ModuleConfig.AllEnabled());
 
-            //antibot.C2.OnScoreUp            += OnC2ScoreUp;
-            //antibot.C2.OnDetection          += OnC2Detection;
-            //antibot.Hidden.OnDetection      += OnHiddenDetection;
-            //antibot.NonStandard.OnDetection += OnNonStandardDetection;
-            //antibot.NetworkScan.OnDetection += OnNetworkScanDetection;
+            antibot.C2.OnScoreUp            += OnC2ScoreUp;
+            antibot.C2.OnDetection += OnC2Detection;
+            antibot.Hidden.OnDetection += OnHiddenDetection;
+            antibot.NonStandard.OnDetection += OnNonStandardDetection;
+            antibot.NetworkScan.OnDetection += OnNetworkScanDetection;
             antibot.Microphone.OnDetection    += OnMicrophoneDetection;
 
             antibot.Start();
