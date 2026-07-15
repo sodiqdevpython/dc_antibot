@@ -8,19 +8,25 @@ namespace dc_antibot
     {
         static void Main(string[] args)
         {
-            var antibot = new AntiBotManager(ModuleConfig.AllEnabled());
+            var antibot = new AntiBotManager();
 
-            //antibot.C2.OnScoreUp            += OnC2ScoreUp;
-            //antibot.C2.OnDetection += OnC2Detection;
-            //antibot.Hidden.OnDetection += OnHiddenDetection;
-            //antibot.NonStandard.OnDetection += OnNonStandardDetection;
-            //antibot.NetworkScan.OnDetection += OnNetworkScanDetection;
-            antibot.Microphone.OnDetection    += OnMicrophoneDetection;
+            antibot.C2.OnDetection          += OnC2Detection;
+            antibot.Hidden.OnDetection      += OnHiddenDetection;
+            antibot.NonStandard.OnDetection += OnNonStandardDetection;
+            antibot.NetworkScan.OnDetection += OnNetworkScanDetection;
+            antibot.Microphone.OnDetection  += OnMicrophoneDetection;
+            // antibot.C2.OnScoreUp         += OnC2ScoreUp;
 
-            antibot.Start();
+            antibot.C2.Start();
+            antibot.Microphone.Start();
 
-            //foreach (var name in antibot.ModuleNames)
-            //    Console.WriteLine(name + ": " + (antibot.IsModuleRunning(name) ? "ON" : "OFF"));
+            
+            //antibot.StartAll(); hammasini bittada yoqsh uchun
+
+            // Runtime da yoqib-o'chirish:
+            //   antibot.NetworkScan.Start();
+            //   antibot.Microphone.Stop();
+            //   bool on = antibot.C2.IsRunning;
 
             Console.ReadLine();
             antibot.Stop();

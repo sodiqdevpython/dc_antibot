@@ -14,7 +14,11 @@ namespace dc_antibot.AntiBot.Core
         {
             if (IsRunning) return;
             IsRunning = true;
-            try { OnStart(); }
+            try
+            {
+                EventBus.Start();
+                OnStart();
+            }
             catch { IsRunning = false; throw; }
         }
 
