@@ -144,29 +144,56 @@ namespace dc_antibot.AntiBot.Modules.Microphone
 
         private static bool HasMicrophoneConsent(string processPath)
         {
-            string processFileName = Path.GetFileName(processPath);
+            if (string.IsNullOrEmpty(processPath)) return false;
 
-            using (RegistryKey key = Registry.CurrentUser.OpenSubKey(ConsentStorePath))
+            try
             {
-                if (key != null)
+                using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64))
+                using (var root = baseKey.OpenSubKey(ConsentStorePath))
                 {
-                    foreach (string appName in key.GetSubKeyNames())
+                    if (CheckConsentInKey(root, processPath))
+                        return true;
+                }
+            }
+            catch { }
+
+            try
+            {
+                using (var baseKey = RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView.Registry64))
+                {
+                    foreach (string sid in baseKey.GetSubKeyNames())
                     {
-                        using (RegistryKey appKey = key.OpenSubKey(appName))
+                        if (!sid.StartsWith("S-1-5-21-", StringComparison.OrdinalIgnoreCase) ||
+                            sid.EndsWith("_Classes", StringComparison.OrdinalIgnoreCase))
                         {
-                            if (appKey != null)
-                            {
-                                string exePath = appName.Replace('#', '\\');
+                            continue;
+                        }
 
-                                string exeFileName = Path.GetFileName(exePath);
+                        string fullPath = $@"{sid}\{ConsentStorePath}";
 
-                                if (string.Equals(exeFileName, processFileName, StringComparison.OrdinalIgnoreCase))
-                                {
-                                    return true;
-                                }
-                            }
+                        using (var root = baseKey.OpenSubKey(fullPath))
+                        {
+                            if (CheckConsentInKey(root, processPath))
+                                return true;
                         }
                     }
+                }
+            }
+            catch { }
+
+            return false;
+        }
+
+        private static bool CheckConsentInKey(RegistryKey root, string processPath)
+        {
+            if (root == null) return false;
+
+            foreach (var appName in root.GetSubKeyNames())
+            {
+                string exePath = appName.Replace('#', '\\');
+                if (string.Equals(exePath, processPath, StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
                 }
             }
 
