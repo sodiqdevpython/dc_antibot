@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using dc_antibot.AntiBot.Common;
 using dc_antibot.AntiBot.Modules.C2Connections;
 using dc_antibot.AntiBot.Modules.HiddenProcessConnections;
@@ -12,108 +10,56 @@ namespace dc_antibot.AntiBot.Core
 {
     public class AntiBotManager
     {
-        private readonly ModuleConfig _config;
-        private readonly Dictionary<string, IDetectionModule> _all;
-
         public C2ConnectionsModule  C2          { get; private set; }
         public HiddenProcessModule  Hidden      { get; private set; }
         public NonStandardModule    NonStandard { get; private set; }
         public NetworkScanModule    NetworkScan { get; private set; }
         public MicrophoneModule     Microphone  { get; private set; }
 
-        public bool IsRunning { get; private set; }
-
-        public AntiBotManager(ModuleConfig config)
+        public AntiBotManager()
         {
-            if (config == null) throw new ArgumentNullException("config");
-            _config = config;
+            ScoreLogger.SessionStart();
 
             C2          = new C2ConnectionsModule();
             Hidden      = new HiddenProcessModule();
             NonStandard = new NonStandardModule();
             NetworkScan = new NetworkScanModule();
             Microphone  = new MicrophoneModule();
-
-            _all = new Dictionary<string, IDetectionModule>(StringComparer.OrdinalIgnoreCase)
-            {
-                { C2.Name,          C2 },
-                { Hidden.Name,      Hidden },
-                { NonStandard.Name, NonStandard },
-                { NetworkScan.Name, NetworkScan },
-                { Microphone.Name,  Microphone },
-            };
         }
 
-        public IEnumerable<string> ModuleNames
+        public void StartAll()
         {
-            get { return _all.Keys.ToArray(); }
+            SafeStart(C2);
+            SafeStart(Hidden);
+            SafeStart(NonStandard);
+            SafeStart(NetworkScan);
+            SafeStart(Microphone);
         }
 
-        public bool IsModuleRunning(string name)
+        public void StopAll()
         {
-            IDetectionModule m;
-            return _all.TryGetValue(name, out m) && m.IsRunning;
-        }
-
-        public Dictionary<string, bool> GetState()
-        {
-            var dict = new Dictionary<string, bool>();
-            foreach (var kv in _all) dict[kv.Key] = kv.Value.IsRunning;
-            return dict;
-        }
-
-        public void Start()
-        {
-            if (IsRunning) return;
-
-            ScoreLogger.SessionStart();
-            EventBus.Start();
-
-            if (_config.EnableC2Connections)            SafeStart(C2);
-            if (_config.EnableHiddenProcessConnections) SafeStart(Hidden);
-            if (_config.EnableNonStandardConnection)    SafeStart(NonStandard);
-            if (_config.EnableNetworkScanning)          SafeStart(NetworkScan);
-            if (_config.EnableMicrophone)               SafeStart(Microphone);
-
-            IsRunning = true;
+            SafeStop(C2);
+            SafeStop(Hidden);
+            SafeStop(NonStandard);
+            SafeStop(NetworkScan);
+            SafeStop(Microphone);
         }
 
         public void Stop()
         {
-            if (!IsRunning) return;
-
-            foreach (var m in _all.Values)
-            {
-                try { m.Stop(); } catch { }
-            }
-
+            StopAll();
             EventBus.Stop();
-            IsRunning = false;
-        }
-
-        public bool StartModule(string name)
-        {
-            IDetectionModule m;
-            if (!_all.TryGetValue(name, out m)) return false;
-            if (m.IsRunning) return true;
-            try { m.Start(); return true; } catch { return false; }
-        }
-
-        public bool StopModule(string name)
-        {
-            IDetectionModule m;
-            if (!_all.TryGetValue(name, out m)) return false;
-            if (!m.IsRunning) return true;
-            try { m.Stop(); return true; } catch { return false; }
         }
 
         private static void SafeStart(IDetectionModule m)
         {
             try { m.Start(); }
-            catch (Exception ex)
-            {
-                Console.WriteLine("[AntiBot] " + m.Name + " failed to start: " + ex.Message);
-            }
+            catch (Exception ex) { Console.WriteLine("[AntiBot] " + m.Name + " failed to start: " + ex.Message); }
+        }
+
+        private static void SafeStop(IDetectionModule m)
+        {
+            try { m.Stop(); } catch { }
         }
     }
 }
